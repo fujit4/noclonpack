@@ -68,11 +68,11 @@ func run() error {
 	cmd := os.Args[1]
 	switch cmd {
 	case "add":
-		add(pluginsFilePath)
+		return add(pluginsFilePath)
 	case "list":
-		list(pluginsFilePath)
+		return list(pluginsFilePath)
 	case "rm":
-		remove()
+		return remove(pluginsFilePath)
 	case "sync":
 		return sync(pluginsFilePath, packPath)
 	default:
@@ -172,7 +172,7 @@ func list(pluginsFilePath string) error {
 	return nil
 }
 
-func remove() error {
+func remove(pluginsFilePath string) error {
 	fmt.Println("remove")
 	return nil
 }
