@@ -78,8 +78,6 @@ func run() error {
 	default:
 		return errors.New("存在しないコマンドです。")
 	}
-
-	return nil
 }
 
 func add(pluginsFilePath string) error {
@@ -89,6 +87,10 @@ func add(pluginsFilePath string) error {
 	}
 
 	plugins, err := readPlugins(pluginsFilePath)
+	if err != nil {
+		return err
+	}
+	
 
 	startOrOpt := os.Args[2]
 	zipUrl := os.Args[3]
@@ -173,7 +175,58 @@ func list(pluginsFilePath string) error {
 }
 
 func remove(pluginsFilePath string) error {
-	fmt.Println("remove")
+	if len(os.Args) < 4 {
+		return errors.New("引数が不足しています。")
+	}
+	startOrOpt := os.Args[2]
+	repo := os.Args[3]
+
+	plugins, err := readPlugins(pluginsFilePath)
+	if err != nil {
+		return err
+	}
+
+	var target Plugin
+	deleted := false
+	if startOrOpt == "start" {
+		for i, p := range plugins.Start {
+			if p.Repo == repo {
+				target = plugins.Start[i]
+				deleted = true
+				plugins.Start = append(plugins.Start[:i], plugins.Start[i+1:]...)
+				slices.Delete(plugins.Start, i, i+1)
+				break
+			}
+		}
+	} else if startOrOpt == "opt" {
+		for i, p := range plugins.Opt {
+			if p.Repo == repo {
+				target = plugins.Opt[i]
+				deleted = true
+				plugins.Opt = append(plugins.Opt[:i], plugins.Opt[i+1:]...)
+				break
+			}
+		}
+	} else {
+		return errors.New("第二引数はstartかoptを指定してください")
+	}
+
+	if deleted {
+		data, err := yaml.Marshal(plugins)
+		if err != nil {
+			return err
+		}
+
+		err = os.WriteFile(pluginsFilePath, data, 0644)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("removed : %v\n", target)
+	} else {
+		fmt.Printf("removed : ", "nothing")
+	}
+
+
 	return nil
 }
 
@@ -277,12 +330,12 @@ func listDirEntries(dirPath string) ([]string, error) {
 }
 
 func readPlugins(path string) (*Plugins, error) {
+	var plugins Plugins
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return &plugins, nil
 	}
 
-	var plugins Plugins
 	if err := yaml.Unmarshal(data, &plugins); err != nil {
 		return nil, err
 	}
