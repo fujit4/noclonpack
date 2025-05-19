@@ -294,7 +294,7 @@ func getPackDir() (error, string) {
 	if err != nil {
 		return err, ""
 	}
-	dir := filepath.Join(string(output), "pack", "ttpack")
+	dir := filepath.Join(string(output), "pack", "noclonpack")
 	return nil, dir
 }
 
