@@ -69,6 +69,8 @@ func run() error {
 	switch cmd {
 	case "add":
 		add(pluginsFilePath)
+	case "list":
+		list(pluginsFilePath)
 	case "rm":
 		remove()
 	case "sync":
@@ -159,6 +161,15 @@ func extractRepoAndVersionPath(rawURL string) (string, string, error) {
 	v := strings.TrimRight(b, ".zip")
 
 	return path.Join(owner, repo), v, nil
+}
+
+func list(pluginsFilePath string) error {
+	data, err := os.ReadFile(pluginsFilePath)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(data))
+	return nil
 }
 
 func remove() error {
