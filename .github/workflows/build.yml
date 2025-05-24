@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: noclonpack-${{ matrix.os }}-${{ matrix.arch }}
-          path: build/${{ matrix.os }}_${{ matrix.arch }}/$FILENAME
+          path: build/${{ matrix.os }}_${{ matrix.arch }}/*
