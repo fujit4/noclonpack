@@ -30,7 +30,9 @@ import (
 //     url: https://github.com/username/repo3/archive/refs/heads/main.zip
 // ```
 
-Version := "v.X.X.X"
+var (
+	Version = "v.X.X.X"
+)
 
 type Plugin struct {
 	Repo    string `yaml:"repo"`
