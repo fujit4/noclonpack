@@ -21,21 +21,17 @@ import (
 // ```plugins.yml
 // start:
 //   - repo: username/repo1
-//     version: v1.0.0
 //     url: https://github.com/username/repo1/archive/refs/tags/v1.0.0.zip
 //   - repo: username/repo2
-//     version: main
 //     url: https://github.com/username/repo2/archive/refs/heads/main.zip
 //
 // opt:
 //   - repo: username/repo3
-//     version: main
 //     url: https://github.com/username/repo3/archive/refs/heads/main.zip
 // ```
 
 type Plugin struct {
 	Repo    string `yaml:"repo"`
-	Version string `yaml:"version"`
 	Url     string `yaml:"url"`
 }
 
@@ -94,12 +90,12 @@ func add(pluginsFilePath string) error {
 
 	startOrOpt := os.Args[2]
 	zipUrl := os.Args[3]
-	repo, version, err := extractRepoAndVersionPath(zipUrl)
+	repo,  err := extractRepoPath(zipUrl)
 	if err != nil {
 		return err
 	}
 
-	plugin := Plugin{repo, version, zipUrl}
+	plugin := Plugin{repo, zipUrl}
 
 	if startOrOpt == "start" {
 		isContain := false
@@ -143,26 +139,22 @@ func add(pluginsFilePath string) error {
 	return nil
 }
 
-func extractRepoAndVersionPath(rawURL string) (string, string, error) {
+func extractRepoPath(rawURL string) (string, error) {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return "", "", fmt.Errorf("URLの解析に失敗しました: %w", err)
+		return "", fmt.Errorf("URLの解析に失敗しました: %w", err)
 	}
 
 	// パスを分割して "owner/repo" を取得
 	segments := strings.Split(parsedURL.Path, "/")
 	if len(segments) < 3 {
-		return "", "", fmt.Errorf("URLの形式が正しくありません: %s", rawURL)
+		return "", fmt.Errorf("URLの形式が正しくありません: %s", rawURL)
 	}
 
 	owner := segments[1]
 	repo := segments[2]
 
-	p := parsedURL.Path
-	b := path.Base(p)
-	v := strings.TrimRight(b, ".zip")
-
-	return path.Join(owner, repo), v, nil
+	return path.Join(owner, repo), nil
 }
 
 func list(pluginsFilePath string) error {
@@ -238,7 +230,7 @@ func sync(pluginsFilePath, packPath string) error {
 	if err != nil {
 		return err
 	}
-	pluginsMaps := [2]map[string]string{makePluginsMap(plugins.Start), makePluginsMap(plugins.Opt)}
+	pluginsMaps := [2]map[string]bool{makePluginsMap(plugins.Start), makePluginsMap(plugins.Opt)}
 
 	// 前処理 -------------------------------------
 	for _, p := range packPaths {
@@ -343,11 +335,11 @@ func readPlugins(path string) (*Plugins, error) {
 	return &plugins, nil
 }
 
-func makePluginsMap(plugins []Plugin) map[string]string {
-	pluginsMap := make(map[string]string)
+func makePluginsMap(plugins []Plugin) map[string]bool {
+	pluginsMap := make(map[string]bool)
 	for _, p := range plugins {
 		key := makeDirName(p)
-		pluginsMap[key] = p.Version
+		pluginsMap[key] = true
 	}
 	return pluginsMap
 }
