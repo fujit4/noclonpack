@@ -124,13 +124,7 @@ func add(pluginsFilePath string) error {
 	}
 
 	// write
-	data, err := yaml.Marshal(plugins)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(pluginsFilePath, data, 0644)
-	if err != nil {
+	if err := writePlugins(plugins, pluginsFilePath); err != nil {
 		return err
 	}
 
@@ -204,13 +198,7 @@ func remove(pluginsFilePath string) error {
 	}
 
 	if deleted {
-		data, err := yaml.Marshal(plugins)
-		if err != nil {
-			return err
-		}
-
-		err = os.WriteFile(pluginsFilePath, data, 0644)
-		if err != nil {
+		if err := writePlugins(plugins, pluginsFilePath); err != nil {
 			return err
 		}
 		fmt.Printf("removed : %v\n", target)
@@ -468,3 +456,40 @@ func unzipWithoutTopLevel(src, dest string) error {
 	}
 	return nil
 }
+
+
+
+func writePlugins(plugins *Plugins, pluginsFilePath string) error {
+	p1 := plugins.Start
+	slices.SortStableFunc(p1, func(a,b Plugin) int {
+		if a.Repo < b.Repo {
+			return -1
+		} else {
+			return 1
+		}
+	})
+	plugins.Start = p1
+
+	p2 := plugins.Opt
+	slices.SortStableFunc(p2, func(a,b Plugin) int {
+		if a.Repo < b.Repo {
+			return -1
+		} else {
+			return 1
+		}
+	})
+	plugins.Opt = p2
+
+	data, err := yaml.Marshal(plugins)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(pluginsFilePath, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
