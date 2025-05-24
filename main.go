@@ -30,6 +30,8 @@ import (
 //     url: https://github.com/username/repo3/archive/refs/heads/main.zip
 // ```
 
+Version := "v.X.X.X"
+
 type Plugin struct {
 	Repo    string `yaml:"repo"`
 	Url     string `yaml:"url"`
@@ -71,6 +73,9 @@ func run() error {
 		return remove(pluginsFilePath)
 	case "sync":
 		return sync(pluginsFilePath, packPath)
+	case "version":
+		fmt.Println(Version)
+		return nil
 	default:
 		return errors.New("存在しないコマンドです。")
 	}
