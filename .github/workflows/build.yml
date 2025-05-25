@@ -31,9 +31,9 @@ jobs:
         id: vars
         run: |
           if [ "${{ matrix.os }}" = "windows" ]; then
-            echo "FILENAME=noclonpack.exe" >> $GITHUB_ENV
+          echo "FILENAME=noclonpack.exe" >> $GITHUB_ENV
           else
-            echo "FILENAME=noclonpack" >> $GITHUB_ENV
+          echo "FILENAME=noclonpack" >> $GITHUB_ENV
           fi
 
       - name: Build
@@ -48,8 +48,7 @@ jobs:
           name: noclonpack-${{ matrix.os }}-${{ matrix.arch }}
           path: build/${{ matrix.os }}_${{ matrix.arch }}/*
 
-
-     - name: Archive Production Build
+      - name: Archive Production Build
         run: |
           tar -czf ${{github.ref_name}}.tar.gz ./build
 
@@ -58,10 +57,9 @@ jobs:
           snapshot_or_relealse=`echo ${{github.ref_name}} | cut -d '-' -f1`
           version=`echo ${{githu.ref_name}} | cut -d '-' -f2`
           if [ ${snapshot_or_relealse} = "snapshot" ]; then
-            gh release create ${version} --prerelease --generate-notes ${{github.ref_name}}.tar.gz
+          gh release create ${version} --prerelease --generate-notes ${{github.ref_name}}.tar.gz
           else
-            gh release create ${version} --latest --generate-notes ${{github.ref_name}}.tar.gz
+          gh release create ${version} --latest --generate-notes ${{github.ref_name}}.tar.gz
           fi
-
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
