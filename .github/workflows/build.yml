@@ -65,10 +65,11 @@ jobs:
           ls -R
           snapshot_or_relealse=`echo ${{github.ref_name}} | cut -d '-' -f1`
           version=`echo ${{github.ref_name}} | cut -d '-' -f2`
+          files=$(find artifacts -type f) # Find only files in the artifacts directory
           if [ ${snapshot_or_relealse} = "snapshot" ]; then
-            gh release create ${version} --target ${{github.sha}} --prerelease --generate-notes artifacts/*
+            gh release create ${version} --target ${{github.sha}} --prerelease --generate-notes $files
           else
-            gh release create ${version} --target ${{github.sha}} --latest --generate-notes artifacts/*
+            gh release create ${version} --target ${{github.sha}} --latest --generate-notes $files
           fi
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
