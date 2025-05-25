@@ -46,7 +46,7 @@ type Plugins struct {
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "エラー: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -63,7 +63,7 @@ func run() error {
 	}
 
 	if len(os.Args) < 2 {
-		return errors.New("コマンドを指定してください。")
+		return errors.New("Please specify a command")
 	}
 	cmd := os.Args[1]
 	switch cmd {
@@ -79,14 +79,14 @@ func run() error {
 		fmt.Println(Version)
 		return nil
 	default:
-		return errors.New("存在しないコマンドです。")
+		return errors.New("Invalid command")
 	}
 }
 
 func add(pluginsFilePath string) error {
 
 	if len(os.Args) < 4 {
-		return errors.New("引数が不足しています。")
+		return errors.New("Insufficient arguments")
 	}
 
 	plugins, err := readPlugins(pluginsFilePath)
@@ -128,6 +128,8 @@ func add(pluginsFilePath string) error {
 		if !isContain {
 			plugins.Opt = append(plugins.Opt, plugin)
 		}
+	} else {
+		return errors.New("Please specify 'start' or 'opt' as the second argument")
 	}
 
 	// write
@@ -143,13 +145,13 @@ func add(pluginsFilePath string) error {
 func extractRepoPath(rawURL string) (string, error) {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return "", fmt.Errorf("URLの解析に失敗しました: %w", err)
+		return "", fmt.Errorf("Failed to parse URL: %w", err)
 	}
 
 	// パスを分割して "owner/repo" を取得
 	segments := strings.Split(parsedURL.Path, "/")
 	if len(segments) < 3 {
-		return "", fmt.Errorf("URLの形式が正しくありません: %s", rawURL)
+		return "", fmt.Errorf("Invalid URL format: %s", rawURL)
 	}
 
 	owner := segments[1]
@@ -169,7 +171,7 @@ func list(pluginsFilePath string) error {
 
 func remove(pluginsFilePath string) error {
 	if len(os.Args) < 4 {
-		return errors.New("引数が不足しています。")
+		return errors.New("Insufficient arguments")
 	}
 	startOrOpt := os.Args[2]
 	repo := os.Args[3]
@@ -201,7 +203,7 @@ func remove(pluginsFilePath string) error {
 			}
 		}
 	} else {
-		return errors.New("第二引数はstartかoptを指定してください")
+		return errors.New("Please specify 'start' or 'opt' as the second argument")
 	}
 
 	if deleted {
