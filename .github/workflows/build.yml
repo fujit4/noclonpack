@@ -5,6 +5,9 @@ on:
     tags:
       - '*-v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,3 +47,21 @@ jobs:
         with:
           name: noclonpack-${{ matrix.os }}-${{ matrix.arch }}
           path: build/${{ matrix.os }}_${{ matrix.arch }}/*
+
+
+     - name: Archive Production Build
+        run: |
+          tar -czf ${{github.ref_name}}.tar.gz ./build
+
+      - name: Create Release
+        run: |
+          snapshot_or_relealse=`echo ${{github.ref_name}} | cut -d '-' -f1`
+          version=`echo ${{githu.ref_name}} | cut -d '-' -f2`
+          if [ ${snapshot_or_relealse} = "snapshot" ]; then
+            gh release create ${version} --prerelease --generate-notes ${{github.ref_name}}.tar.gz
+          else
+            gh release create ${version} --latest --generate-notes ${{github.ref_name}}.tar.gz
+          fi
+
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
