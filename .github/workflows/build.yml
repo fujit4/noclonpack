@@ -58,12 +58,14 @@ jobs:
 
       - name: Create Release
         run: |
+          gh run download ${{github.run_id}} -D artifact
+          ls -R
           snapshot_or_relealse=`echo ${{github.ref_name}} | cut -d '-' -f1`
           version=`echo ${{github.ref_name}} | cut -d '-' -f2`
           if [ ${snapshot_or_relealse} = "snapshot" ]; then
-          gh release create ${version} --target ${{github.ref_name}} --prerelease --generate-notes build/*
+          gh release create ${version} --target ${{github.ref_name}} --prerelease --generate-notes artifact/*
           else
-          gh release create ${version} --target ${{github.ref_name}} --latest --generate-notes build/*
+          gh release create ${version} --target ${{github.ref_name}} --latest --generate-notes artifact/*
           fi
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
