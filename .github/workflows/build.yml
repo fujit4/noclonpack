@@ -57,6 +57,7 @@ jobs:
       #     tar -czf ${{github.ref_name}}.tar.gz ./build
 
       - name: Create Release
+        uses: actions/checkout@v3
         run: |
           gh run download ${{github.run_id}} -D artifact
           ls -R
