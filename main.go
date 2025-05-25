@@ -18,7 +18,7 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
-// ```plugins.yml
+// ```noclonpack_plugins.yml
 // start:
 //   - repo: username/repo1
 //     url: https://github.com/username/repo1/archive/refs/tags/v1.0.0.zip
@@ -53,7 +53,7 @@ func main() {
 
 func run() error {
 
-	// plugins.ymlの取得
+	// noclonpack_plugins.ymlの取得
 	pluginsFilePath := getPluginsFilePath()
 
 	// packフォルダパスの取得
@@ -353,7 +353,7 @@ func getPackDir() (error, string) {
 
 func getPluginsFilePath() string {
 
-	fileName := "plugins.yml"
+	fileName := "noclonpack_plugins.yml"
 
 	// XDG_CONFIG_HOMEの取得
 	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
