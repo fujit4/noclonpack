@@ -347,7 +347,8 @@ func getPackDir() (error, string) {
 	if err != nil {
 		return err, ""
 	}
-	dir := filepath.Join(string(output), "pack", "noclonpack")
+	rowdir := strings.Split(string(output), ",")[0]
+	dir := filepath.Join(rowdir, "pack", "noclonpack")
 	return nil, dir
 }
 
