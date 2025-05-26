@@ -12,6 +12,11 @@
 
 Release ページからダウンロードしてください。
 
+goユーザーの場合は下記でダウンロード可能です。
+```
+go install github.com/fujit4/noclonpack@latest
+```
+
 
 ## 使い方
 
