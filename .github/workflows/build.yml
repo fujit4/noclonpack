@@ -68,7 +68,8 @@ jobs:
           cd artifacts
           ls | xargs -I{} zip -r {}.zip {} 
           cd ..
-          files=$(find artifacts -type f) # Find only files in the artifacts directory
+          ls artifacts
+          files=$(ls artifacts/*.zip) # Find only files in the artifacts directory
           echo ${file}
           if [ ${snapshot_or_relealse} = "snapshot" ]; then
             gh release create ${version} --target ${{github.sha}} --prerelease --generate-notes ${files}
