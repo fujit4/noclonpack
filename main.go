@@ -21,13 +21,13 @@ import (
 // ```noclonpack_plugins.yml
 // start:
 //   - repo: username/repo1
-//     url: https://github.com/username/repo1/archive/refs/tags/v1.0.0.zip
+//     url: https://github.com/<username>/<repo1>/archive/refs/tags/v1.0.0.zip
 //   - repo: username/repo2
-//     url: https://github.com/username/repo2/archive/refs/heads/main.zip
+//     url: https://github.com/<username>/<repo2>/archive/refs/heads/main.zip
 //
 // opt:
 //   - repo: username/repo3
-//     url: https://github.com/username/repo3/archive/refs/heads/main.zip
+//     url: https://github.com/<username>/<repo3>/archive/refs/heads/main.zip
 // ```
 
 var (
@@ -78,9 +78,33 @@ func run() error {
 	case "version":
 		fmt.Println(Version)
 		return nil
+	case "help":
+		return help()
 	default:
 		return errors.New("Invalid command")
 	}
+}
+
+func help() error {
+	fmt.Println(`Usage: noclonpack <command> [arguments]
+
+Commands:
+  sync                 Sync plugins based on noclonpack_plugins.yml
+  add <dir> <url>      Add a plugin to 'start' or 'opt' from a zip URL
+  rm <repo>            Remove a plugin by repository name
+  list                 List plugins from noclonpack_plugins.yml
+  help                 Display usage
+  version              Display the version of noclonpack
+
+Examples:
+  noclonpack sync
+  noclonpack add start https://github.com/<user>/<repo>/archive/refs/heads/main.zip
+  noclonpack rm user/repo
+  noclonpack list
+  noclonpack help
+  noclonpack version
+`)
+	return nil
 }
 
 func add(pluginsFilePath string) error {
